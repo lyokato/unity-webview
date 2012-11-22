@@ -133,6 +133,11 @@ static void UnitySendMessage(
 	}
 }
 
+- (void)setFrame:(NSRect)frame
+{
+	webView.frame = frame;
+}
+
 - (void)setRect:(int)width height:(int)height
 {
 	NSRect frame;
@@ -267,6 +272,7 @@ void *_WebViewPlugin_Init(
 	const char *gameObject, int width, int height, BOOL inEditor);
 void _WebViewPlugin_Destroy(void *instance);
 void _WebViewPlugin_SetRect(void *instance, int width, int height);
+void _WebViewPlugin_SetFrame(void *instance, int x, int y, int width, int height);
 void _WebViewPlugin_SetVisibility(void *instance, BOOL visibility);
 void _WebViewPlugin_LoadURL(void *instance, const char *url);
 void _WebViewPlugin_LoadHTMLString(void *instance, const char *html, const char *baseURL);
@@ -297,6 +303,12 @@ void _WebViewPlugin_Destroy(void *instance)
 	WebViewPlugin *webViewPlugin = (WebViewPlugin *)instance;
 	[webViewPlugin release];
 	[pool removeObject:[NSValue valueWithPointer:instance]];
+}
+
+void _WebViewPlugin_SetFrame(void *instance, int x, int y, int width, int height)
+{
+	WebViewPlugin *webViewPlugin = (WebViewPlugin *)instance;
+	[webViewPlugin setFrame:NSMakeRect(x, y, width, height)];
 }
 
 void _WebViewPlugin_SetRect(void *instance, int width, int height)

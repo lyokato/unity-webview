@@ -65,6 +65,9 @@ public class WebViewObject : MonoBehaviour
 	private static extern void _WebViewPlugin_SetRect(
 		IntPtr instance, int width, int height);
 	[DllImport("WebView")]
+	private static extern void _WebViewPlugin_SetFrame(
+		IntPtr instance, int x, int y, int width, int height);
+	[DllImport("WebView")]
 	private static extern void _WebViewPlugin_SetVisibility(
 		IntPtr instance, bool visibility);
 	[DllImport("WebView")]
@@ -85,6 +88,9 @@ public class WebViewObject : MonoBehaviour
 	private static extern IntPtr _WebViewPlugin_Init(string gameObject);
 	[DllImport("__Internal")]
 	private static extern int _WebViewPlugin_Destroy(IntPtr instance);
+	[DllImport("__Internal")]
+	private static extern void _WebViewPlugin_SetFrame(
+		IntPtr instance, int x, int y, int width, int height);
 	[DllImport("__Internal")]
 	private static extern void _WebViewPlugin_SetMargins(
 		IntPtr instance, int left, int top, int right, int bottom);
@@ -149,6 +155,25 @@ public class WebViewObject : MonoBehaviour
 #endif
 	}
 
+    public void SetFrame(int x, int y, int width, int height)
+    {
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX
+		if (webView == IntPtr.Zero)
+			return;
+        int bottom = Screen.height - (y + height);
+		CreateTexture(x, bottom, width, height);
+		_WebViewPlugin_SetFrame(webView, x, y, width, height);
+#elif UNITY_IPHONE
+		if (webView == IntPtr.Zero)
+			return;
+		_WebViewPlugin_SetFrame(webView, x, y, width, height);
+#elif UNITY_ANDROID
+		if (webView == null)
+			return;
+        // TODO
+#endif
+    }
+
 	public void SetMargins(int left, int top, int right, int bottom)
 	{
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX
@@ -194,7 +219,7 @@ public class WebViewObject : MonoBehaviour
         LoadHTMLString(html.text);
     }
 
-    public void LoadHTMLString(string html, string baseURL = null)
+    public void LoadHTMLString(string html, string baseURL = "")
     {
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_IPHONE
 		if (webView == IntPtr.Zero)

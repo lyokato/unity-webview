@@ -68,6 +68,18 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
 	}
 }
 
+- (void)setFrame:(CGRect)frame
+{
+	UIView *view = UnityGetGLViewController().view;
+	CGFloat scale = view.contentScaleFactor;
+	webView.frame = CGRectMake(
+        frame.origin.x    / scale, 
+        frame.origin.y    / scale, 
+        frame.size.width  / scale, 
+        frame.size.height / scale
+    );
+}
+
 - (void)setMargins:(int)left top:(int)top right:(int)right bottom:(int)bottom
 {
 	UIView *view = UnityGetGLViewController().view;
@@ -113,6 +125,8 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
 extern "C" {
 	void *_WebViewPlugin_Init(const char *gameObjectName);
 	void _WebViewPlugin_Destroy(void *instance);
+	void _WebViewPlugin_SetFrame(
+		void *instance, int x, int y, int width, int height);
 	void _WebViewPlugin_SetMargins(
 		void *instance, int left, int top, int right, int bottom);
 	void _WebViewPlugin_SetVisibility(void *instance, BOOL visibility);
@@ -131,6 +145,13 @@ void _WebViewPlugin_Destroy(void *instance)
 {
 	WebViewPlugin *webViewPlugin = (WebViewPlugin *)instance;
 	[webViewPlugin release];
+}
+
+void _WebViewPlugin_SetFrame(
+	void *instance, int x, int y, int width, int height)
+{
+	WebViewPlugin *webViewPlugin = (WebViewPlugin *)instance;
+	[webViewPlugin setFrame:CGRectMake(x, y, width, height)];
 }
 
 void _WebViewPlugin_SetMargins(
