@@ -42,6 +42,7 @@ extern "C" void UnitySendMessage(const char *, const char *, const char *);
 	webView.delegate = self;
 	webView.hidden = YES;
 	[view addSubview:webView];
+    ((UIScrollView*)[[webView subviews] objectAtIndex:0]).bounces = NO;
 	gameObjectName = [[NSString stringWithUTF8String:gameObjectName_] retain];
 
 	return self;
