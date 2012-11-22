@@ -190,7 +190,7 @@ public class WebViewObject : MonoBehaviour
 
     public void LoadHTMLFile(string fileName)
     {
-        TextAsset html = Resources.Load(fileName);
+        TextAsset html = (TextAsset)Resources.Load(fileName);
         LoadHTMLString(html.text);
     }
 
