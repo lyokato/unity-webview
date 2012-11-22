@@ -109,6 +109,16 @@ public class WebViewPlugin
 		}});
 	}
 
+	public void LoadHTMLString(final String html, final String baseURL)
+	{
+		final Activity a = UnityPlayer.currentActivity;
+		a.runOnUiThread(new Runnable() {public void run() {
+
+            mWebView.loadDataWithBaseURL(baseURL, html, "text/html", "utf-8", null);
+
+		}});
+	}
+
 	public void LoadURL(final String url)
 	{
 		final Activity a = UnityPlayer.currentActivity;

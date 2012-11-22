@@ -68,6 +68,9 @@ public class WebViewObject : MonoBehaviour
 	private static extern void _WebViewPlugin_SetVisibility(
 		IntPtr instance, bool visibility);
 	[DllImport("WebView")]
+	private static extern void _WebViewPlugin_LoadHTMLString(
+		IntPtr instance, string html, string baseURL);
+	[DllImport("WebView")]
 	private static extern void _WebViewPlugin_LoadURL(
 		IntPtr instance, string url);
 	[DllImport("WebView")]
@@ -88,6 +91,9 @@ public class WebViewObject : MonoBehaviour
 	[DllImport("__Internal")]
 	private static extern void _WebViewPlugin_SetVisibility(
 		IntPtr instance, bool visibility);
+	[DllImport("__Internal")]
+	private static extern void _WebViewPlugin_LoadHTMLString(
+		IntPtr instance, string html, string baseURL);
 	[DllImport("__Internal")]
 	private static extern void _WebViewPlugin_LoadURL(
 		IntPtr instance, string url);
@@ -181,6 +187,25 @@ public class WebViewObject : MonoBehaviour
 		webView.Call("SetVisibility", v);
 #endif
 	}
+
+    public void LoadHTMLFile(string fileName)
+    {
+        TextAsset html = Resources.Load(fileName);
+        LoadHTMLString(html.text);
+    }
+
+    public void LoadHTMLString(string html, string baseURL = null)
+    {
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_IPHONE
+		if (webView == IntPtr.Zero)
+			return;
+		_WebViewPlugin_LoadHTMLString(webView, html, baseURL);
+#elif UNITY_ANDROID
+		if (webView == null)
+			return;
+		webView.Call("LoadHTMLString", url);
+#endif
+    }
 
 	public void LoadURL(string url)
 	{

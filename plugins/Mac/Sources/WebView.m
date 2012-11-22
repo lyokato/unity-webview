@@ -148,6 +148,14 @@ static void UnitySendMessage(
 	webView.hidden = visibility ? NO : YES;
 }
 
+- (void)loadHTMLString:(const char *)html baseURL:(const char *)url
+{
+	NSString *htmlStr = [NSString stringWithUTF8String:html];
+	NSString *urlStr = [NSString stringWithUTF8String:url];
+	NSURL *nsurl = [NSURL URLWithString:urlStr];
+    [[webView mainFrame] loadHTMLString:htmlStr baseURL:nsurl];
+}
+
 - (void)loadURL:(const char *)url
 {
 	NSString *urlStr = [NSString stringWithUTF8String:url];
@@ -261,6 +269,7 @@ void _WebViewPlugin_Destroy(void *instance);
 void _WebViewPlugin_SetRect(void *instance, int width, int height);
 void _WebViewPlugin_SetVisibility(void *instance, BOOL visibility);
 void _WebViewPlugin_LoadURL(void *instance, const char *url);
+void _WebViewPlugin_LoadHTMLString(void *instance, const char *html, const char *baseURL);
 void _WebViewPlugin_EvaluateJS(void *instance, const char *url);
 void _WebViewPlugin_Update(void *instance, int x, int y, float deltaY,
 	BOOL buttonDown, BOOL buttonPress, BOOL buttonRelease,
@@ -306,6 +315,12 @@ void _WebViewPlugin_LoadURL(void *instance, const char *url)
 {
 	WebViewPlugin *webViewPlugin = (WebViewPlugin *)instance;
 	[webViewPlugin loadURL:url];
+}
+
+void _WebViewPlugin_LoadHTMLString(void *instance, const char *html, const char *baseURL)
+{
+	WebViewPlugin *webViewPlugin = (WebViewPlugin *)instance;
+    [webViewPlugin loadHTMLString:html baseURL:baseURL];
 }
 
 void _WebViewPlugin_EvaluateJS(void *instance, const char *js)
